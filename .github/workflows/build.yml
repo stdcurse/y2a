@@ -38,7 +38,6 @@ jobs:
           dockerRunArgs: |
             --volume "${PWD}/artifacts:/artifacts"
           run: |
-            dnf -y update
             dnf -y install go
             CGO_ENABLED=0 go build -v -ldflags="-w -s -extldflags=-static"
             mv y2a /artifacts/y2a-aarch64

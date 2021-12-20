@@ -31,14 +31,14 @@ jobs:
         id: runcmd
         with:
           arch: aarch64
-          distro: ubuntu_latest
+          distro: archarm_latest
           githubToken: ${{ secrets.GTOKEN }}
           setup: |
             mkdir -p "${PWD}/artifacts"
           dockerRunArgs: |
             --volume "${PWD}/artifacts:/artifacts"
           run: |
-            apt install golang-go
+            pacman -Sy go
             CGO_ENABLED=0 go build -v -ldflags="-w -s -extldflags=-static"
             mv y2a /artifacts/y2a-aarch64
       - uses: actions/upload-artifact@master

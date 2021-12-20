@@ -39,7 +39,7 @@ jobs:
             --volume "${PWD}/artifacts:/artifacts"
           run: |
             apt update
-            apt install golang-go
+            apt install -y golang-go
             CGO_ENABLED=0 go build -v -ldflags="-w -s -extldflags=-static"
             mv y2a /artifacts/y2a-aarch64
       - uses: actions/upload-artifact@master

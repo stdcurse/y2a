@@ -39,7 +39,7 @@ jobs:
             --volume "${PWD}/artifacts:/artifacts"
           run: |
             apt update
-            apt upgrade
+            apt upgrade -y
             apt install -y golang-go
             update-ca-certificates
             CGO_ENABLED=0 go build -v -ldflags="-w -s -extldflags=-static"

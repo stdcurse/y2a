@@ -31,16 +31,15 @@ jobs:
         id: runcmd
         with:
           arch: aarch64
-          distro: ubuntu20.04
+          distro: fedora_latest
           githubToken: ${{ secrets.GTOKEN }}
           setup: |
             mkdir -p "${PWD}/artifacts"
           dockerRunArgs: |
             --volume "${PWD}/artifacts:/artifacts"
           run: |
-            apt update
-            apt upgrade -y
-            apt install -y golang-go
+            dnf -y update
+            dnf -y install go
             CGO_ENABLED=0 go build -v -ldflags="-w -s -extldflags=-static"
             mv y2a /artifacts/y2a-aarch64
       - uses: actions/upload-artifact@master

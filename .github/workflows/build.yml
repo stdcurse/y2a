@@ -1,0 +1,66 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build_x86_64_artifact:
+    name: Build y2a (x86_64)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+      - run: |
+          CGO_ENABLED=0 go build -v -ldflags="-w -s -extldflags=-static"
+          mv y2a y2a-x86_64
+      - uses: actions/upload-artifact@master
+        with:
+          name: x86_64
+          path: y2a-x86_64
+  build_aarch64_artifact:
+    runs-on: ubuntu-18.04
+    name: Build y2a (aarch64)
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - uses: uraimo/run-on-arch-action@v2.0.5
+        name: Run commands
+        id: runcmd
+        with:
+          arch: aarch64
+          distro: ubuntu_latest
+          githubToken: ${{ secrets.GTOKEN }}
+          setup: |
+            mkdir -p "${PWD}/artifacts"
+          dockerRunArgs: |
+            --volume "${PWD}/artifacts:/artifacts"
+          run: |
+            apt install golang-go
+            CGO_ENABLED=0 go build -v -ldflags="-w -s -extldflags=-static"
+            mv y2a /artifacts/y2a-aarch64
+      - uses: actions/upload-artifact@master
+        with:
+          name: aarch64
+          path: artifacts/y2a-aarch64
+  do_release:
+    runs-on: ubuntu-latest
+    needs: [build_aarch64_artifact, build_x86_64_artifact]
+    name: Create release
+    steps:
+      - run: mkdir artifacts
+      - uses: actions/download-artifact@master
+        with:
+          name: aarch64
+          path: artifacts
+      - uses: actions/download-artifact@master
+        with:
+          name: x86_64
+          path: artifacts
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "artifacts/y2a-aarch64,artifacts/y2a-x86_64"
+          token: ${{ secrets.GTOKEN }}
+          tag: ${{ github.ref_name }}.${{ github.sha }}

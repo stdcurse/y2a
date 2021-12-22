@@ -1,0 +1,43 @@
+{{ $mpc_ver := "1.2.1" }}
+{{ $mpfr_ver := "4.1.0" }}
+{{ $gmp_ver := "6.2.1" }}
+name: gcc
+desc: The GNU Compiler Collection
+ver: 11.2.0
+deps: [ libz ]
+makedeps: [ libz-dev ]
+sources:
+  - http://ftp.gnu.org/gnu/gcc/gcc-{{ .ver }}/gcc-{{ .ver }}.tar.gz
+  - http://ftp.gnu.org/gnu/mpc/mpc-{{ $mpc_ver }}.tar.gz
+  - http://www.mpfr.org/mpfr-{{ $mpfr_ver }}/mpfr-{{ $mpfr_ver }}.tar.gz
+  - http://ftp.gnu.org/gnu/gmp/gmp-{{ $gmp_ver }}.tar.xz
+entries:
+  - type: autotools
+    before: |
+      mv "../gmp-{{ $gmp_ver }}" gmp
+      mv "../mpfr-{{ $mpfr_ver }}" mpfr
+      mv "../mpc-{{ $mpc_ver }}" mpc
+      mkdir -p "$pkgdir/bin"
+      cd "$pkgdir/bin"
+    folder: gcc-{{ .ver }}
+    cfgopts:
+      - with-pkgversion="stdcurse 9999 {{ .ver }}"
+      - disable-multilib
+      - enable-languages=c,c++,lto
+      - enable-lto
+      - enable-plugin
+      - disable-bootstrap
+      - with-system-zlib
+      - disable-nls
+      - disable-werror
+      - disable-libsanitizer
+      - with-libs=/lib
+      - with-headers=/usr/include
+subpkgs:
+  - dev
+  - type: custom
+    name: gcc-runtime
+    desc: GCC runtime libraries
+    script: |
+      mkdir -p "$subpkgdir"/lib
+      mv "$pkgdir/usr/lib"/* "$subpkgdir"/lib

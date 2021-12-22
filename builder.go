@@ -68,6 +68,7 @@ func packageEntry(s *Entry) string {
 		CustomBuilderPackage(&b, s)
 	}
 	fmt.Fprintf(&b, "%s\n", s.After)
+	fmt.Fprintln(&b, "rm -rf \"$pkgdir/usr/share/man\"\n")
 
 	return b.String()
 }

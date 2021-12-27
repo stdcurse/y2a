@@ -27,7 +27,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Printf("Usage: %s [USAGE]\n", os.Args[0])
+		fmt.Printf("Usage: %s [SOURCE]\n", os.Args[0])
 
 		os.Exit(1)
 	}

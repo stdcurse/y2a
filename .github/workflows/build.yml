@@ -1,10 +1,7 @@
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    tags:
+      - "v*"
 jobs:
   build_x86_64_artifact:
     name: Build y2a (x86_64)
@@ -64,4 +61,4 @@ jobs:
         with:
           artifacts: "artifacts/y2a-aarch64,artifacts/y2a-x86_64"
           token: ${{ secrets.GTOKEN }}
-          tag: ${{ github.ref_name }}.${{ github.sha }}
+          tag: ${{ github.ref_name }}

@@ -120,6 +120,7 @@ func (s *Scheme) Build() string {
 	fmt.Fprintf(&b, "source=\"%s\"\n", strings.Join(s.Sources, " "))
 	fmt.Fprintf(&b, "depends=\"%s\"\n", strings.Join(s.Dependencies, " "))
 	fmt.Fprintf(&b, "makedepends=\"%s\"\n", strings.Join(s.MakeDependencies, " "))
+	fmt.Fprintln(&b, "options=\"lib64\"")
 	spkgs := []string{}
 	for _, x := range s.Subpackages {
 		if reflect.TypeOf(x).Kind() == reflect.String {
